@@ -11,7 +11,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from sklearn.base import ClassifierMixin
+import numpy as np
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    GradientBoostingClassifier
+)
 
 from iml_interpretability.data import Dataset
 
@@ -48,3 +53,60 @@ class RelativeNumberOfLeaves(InterpretabilityMetric):
         if not isinstance(model, DecisionTreeClassifier):
             raise TypeError(f"{type(self).__name__} only supports DecisionTreeClassifier, got {type(model).__name__}")
         return model.get_n_leaves() / 2 ** model.get_depth()
+
+    
+class AveragePathLength(InterpretabilityMetric):
+    """
+    Average Path Length (APL).
+
+    Measures the average number of decision rules
+    evaluated per sample.
+
+    For ensembles, paths across all trees are summed.
+
+    Lower APL indicates fewer decisions to follow.
+    """
+
+    name = "average_path_length"
+
+    def score(self, model: ClassifierMixin, dataset: Dataset) -> float:
+
+        # Step 1: Identify the trees in the model
+        if isinstance(model, DecisionTreeClassifier):
+            trees = [model]
+
+        elif isinstance(model, (
+            RandomForestClassifier,
+            GradientBoostingClassifier
+        )):
+            trees = np.asarray(
+                model.estimators_,
+                dtype=object
+            ).ravel()
+
+        else:
+            raise TypeError(
+                f"Unsupported model: {type(model).__name__}"
+            )
+
+        # Step 2: Get the dataset features
+        X = np.asarray(dataset.X, dtype=np.float32)
+
+        if len(X) == 0:
+            raise ValueError("Cannot calculate APL on an empty dataset")
+
+        total_apl = 0.0
+
+        # Step 3: Calculate the APL for every tree
+        for tree in trees:
+
+            paths = tree.tree_.decision_path(X)
+
+            # Number of visited nodes minus the leaf
+            path_lengths = np.diff(paths.indptr) - 1
+
+            # Average over all samples
+            total_apl += np.mean(path_lengths)
+
+        # Step 4: Return the final score
+        return float(total_apl)
