@@ -86,10 +86,7 @@ iML26-27-Exercise-1/
 │
 ├── data/
 ├── results/
-├── presentation/
 │
-├── apl_study.py
-├── main.py
 ├── pyproject.toml
 ├── uv.lock
 └── README.md
@@ -488,3 +485,15 @@ The experiment configuration, model definitions, metric implementation, and eval
 **Model Class:** Tree-based classifiers
 
 **Primary Implementation:** `iml_interpretability/metric.py`
+
+
+
+## 16 AI Usage Statement
+
+I used ChatGPT as a supporting tool during this exercise to better understand the concept of model interpretability, the mathematical formulation of Average Path Length (APL), and its implementation in Python.
+
+AI assistance was also used for guidance on code structure, debugging, test development, and organizing the experimental evaluation. I used this guidance to develop and refine the implementation, run experiments, and interpret the results.
+
+I reviewed the AI-generated suggestions, tested the implementation using Python and pytest, and checked the APL calculations against manually calculated examples. The experimental results and conclusions are based on the executed code and observed outputs.
+
+AI assistance was used as a learning and development aid rather than as a substitute for experimental validation.
