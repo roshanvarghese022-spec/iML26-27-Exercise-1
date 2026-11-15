@@ -36,12 +36,6 @@ class InterpretabilityMetric(ABC):
         :return: The interpretability score. Document whether higher means more or less interpretable.
         :rtype: float
         """
-
-    def score(self, model: ClassifierMixin, dataset: Dataset) -> float:
-        if not isinstance(model, DecisionTreeClassifier):
-            raise TypeError(f"{type(self).__name__} only supports DecisionTreeClassifier, got {type(model).__name__}")
-        return model.get_n_leaves() / 2 ** model.get_depth()
-
     
 class AveragePathLength(InterpretabilityMetric):
     """
